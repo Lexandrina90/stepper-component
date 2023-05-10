@@ -4,23 +4,23 @@ body {
   padding: 0;
 }
 
-* {
-  box-sizing: border-box;
-  /* background: #201a19; */
-}
-
-
+/* :root {
+  -color-primary: #ffb4a4;
+  --color-on-primary: #640d00;
+  --color-surface-1: #2b2220;
+} */
 .stepper-container {
   display: flex;
   align-items: center;
   position: relative;
   margin: 20px 50px;
+  width: 126px;
+  height: 40px;
 }
 
 .decrement-btn {
   height: 40px;
   display: inline-block;
-  padding: 16px;
   font-size: 14px;
   border-radius: 8px 0px 0px 8px;
   border: 1px solid #ffb4a4;
@@ -28,10 +28,11 @@ body {
   border-right: 0;
 }
 .decrement-btn-minus {
-  padding-top: 8px;
-  padding-left: 16px;
+ 
+  padding: 16px;
   position: relative;
   background: #2b2220;
+  border-right: 0;
 }
 .decrement-btn-minus-h {
   position: absolute;
@@ -44,26 +45,25 @@ body {
 }
 .value-display {
   display: inline-block;
-  padding: 11px 16px;
+  padding: 10.9px 18px;
   font-size: 14px;
   color: #ffb4a4;
   border: 1px solid #ffb4a4;
-  font-weight: 600;
+  font-weight: 700;
   background: #2b2220;
 }
 .increment-btn {
   border-radius: 0px 8px 8px 0px;
   border: 1px solid #ffb4a4;
   border-left: 0;
- background:#2b2220;
-  padding: 16px;
+  background:#2b2220;
   height: 40px;
 }
 .increment-btn-plus {
-  padding-top: 8px;
-  padding-left: 16px;
+  padding: 16px;
   position: relative;
   background: #2b2220;
+  border-left: 0;
 }
 .increment-btn-plus-v,
 .increment-btn-plus-h {
