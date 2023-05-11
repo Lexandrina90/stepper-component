@@ -1,11 +1,11 @@
 class Stepper extends HTMLElement {
   constructor() {
     super();
-    const shadow = this.attachShadow({mode:'open'});
+    const shadow = this.attachShadow({ mode: 'open' });
 
     const initialValue = parseFloat(this.getAttribute('initial-value')) || 0;
     const step = parseFloat(this.getAttribute('step')) || 1;
-    const fill = this.getAttribute('fill') || '#ffb4a4';
+    const fill = this.getAttribute('fill') === 'true' ? '#ffb4a4' : '#2b2220';
     const btnBackground = fill === '#ffb4a4' ? '#ffb4a4' : '#2b2220';
     const minusPlusBackground = fill === '#ffb4a4' ? '#2b2220' : '#ffb4a4';
 
@@ -13,66 +13,142 @@ class Stepper extends HTMLElement {
     const container = document.createElement('div');
     container.setAttribute('class', 'stepper-container');
 
-    const decrementBtn = document.createElement('button');
-    decrementBtn.setAttribute('class', 'decrement-btn');
-    decrementBtn.style.background = btnBackground;
-    const minus = document.createElement('div');
-    minus.setAttribute('class','decrement-btn-minus');
-    minus.style.background = btnBackground;
-    const minusH = document.createElement('div');
-    minusH.setAttribute('class', 'decrement-btn-minus-h');
-    minusH.style.background = minusPlusBackground;
-    minus.appendChild(minusH);
-    decrementBtn.appendChild(minus);
-    decrementBtn.addEventListener('click', () => {
+    container.innerHTML = `
+      <button class="decrement-btn" style="background: ${btnBackground}">
+        <div class="decrement-btn-minus" style="background: ${btnBackground}">
+          <div class="decrement-btn-minus-h" style="background: ${minusPlusBackground}"></div>
+        </div>
+      </button>
+      <div class="value-display">${initialValue}</div>
+      <button class="increment-btn" style="background: ${btnBackground}">
+        <div class="increment-btn-plus" style="background: ${btnBackground}">
+          <div class="increment-btn-plus-v" style="background: ${minusPlusBackground}"></div>
+          <div class="increment-btn-plus-h" style="background: ${minusPlusBackground}"></div>
+        </div>
+      </button>
+    `;
+
+    const decrementBtn = container.querySelector('.decrement-btn');
+    const decrementButtonClickHandler = () => {
       this.decrement(step);
-    })
+    };
+    decrementBtn.addEventListener('click', decrementButtonClickHandler);
 
-    const incrementBtn = document.createElement('button');
-    incrementBtn.setAttribute('class', 'increment-btn');
-    incrementBtn.style.background = btnBackground;
-    const plus = document.createElement('div');
-    plus.setAttribute('class','increment-btn-plus');
-    plus.style.background = btnBackground;
-    const plusV = document.createElement('div');
-    plusV.setAttribute('class','increment-btn-plus-v');
-    plusV.style.background = minusPlusBackground;
-    const plusH = document.createElement('div');
-    plusH.setAttribute('class','increment-btn-plus-h');
-    plusH.style.background = minusPlusBackground;
-    plus.appendChild(plusV);
-    plus.appendChild(plusH);
-    incrementBtn.appendChild(plus);
-    incrementBtn.addEventListener('click', () => {
+    const incrementBtn = container.querySelector('.increment-btn');
+    const incrementButtonClickHandler = () => {
       this.increment(step);
-    });
+    };
     
-    const valueDisplay = document.createElement('span');
-    valueDisplay.setAttribute('class','value-display');
-    valueDisplay.textContent = initialValue;
-
-    container.appendChild(decrementBtn);
-    container.appendChild(valueDisplay);
-    container.appendChild(incrementBtn);
+    incrementBtn.addEventListener('click', incrementButtonClickHandler);
 
 
-    const linkElem = document.createElement('link');
-    linkElem.setAttribute('rel', 'stylesheet');
-    linkElem.setAttribute('href', '/style.css');
 
-    shadow.appendChild(linkElem);
+    //CSS-style
+    const style = document.createElement('style');
+    console.log(style.isConnected);
+
+    style.textContent = `
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      .stepper-container {
+        display: flex;
+        align-items: center;
+        position: relative;
+        margin: 20px 50px;
+        width: 126px;
+        height: 40px;
+      }
+      
+      .decrement-btn {
+        height: 40px;
+        display: inline-block;
+        font-size: 14px;
+        border-radius: 8px 0px 0px 8px;
+        border: 1px solid #ffb4a4;
+        background: #2b2220;
+        border-right: 0;
+      }
+      .decrement-btn-minus {
+       
+        padding: 16px;
+        position: relative;
+        background: #2b2220;
+        border-right: 0;
+      }
+      .decrement-btn-minus-h {
+        position: absolute;
+        background: #ffb4a4;
+        width: 14px;
+        height: 2px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+      .value-display {
+        display: inline-block;
+        padding: 10.9px 18px;
+        font-size: 14px;
+        color: #ffb4a4;
+        border: 1px solid #ffb4a4;
+        font-weight: 700;
+        background: #2b2220;
+      }
+      .increment-btn {
+        border-radius: 0px 8px 8px 0px;
+        border: 1px solid #ffb4a4;
+        border-left: 0;
+        background:#2b2220;
+        height: 40px;
+      }
+      .increment-btn-plus {
+        padding: 16px;
+        position: relative;
+        background: #2b2220;
+        border-left: 0;
+      }
+      .increment-btn-plus-v,
+      .increment-btn-plus-h {
+        position: absolute;
+        background: #ffb4a4;
+      }
+      
+      .increment-btn-plus-v {
+        width: 2px;
+        height: 14px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+      
+      .increment-btn-plus-h {
+        width: 14px;
+        height: 2px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+      
+      .decrement-btn , .increment-btn {
+        cursor: pointer;
+      }
+    `
+
+    shadow.appendChild(style);
+    console.log(style.isConnected);
     shadow.appendChild(container);
 
     this._value = initialValue;
-
   }
   get value() {
     return this._value;
   }
 
-  set value (newValue) {
+  set value(newValue) {
     this._value = newValue;
-    this.dispatchEvent(new CustomEvent('stepperchange', {detail: this._value}));
+    this.dispatchEvent(new CustomEvent('stepperchange', { detail: this._value }));
     this.updateDisplay();
   }
 
@@ -88,7 +164,13 @@ class Stepper extends HTMLElement {
   updateDisplay() {
     const valueDisplay = this.shadowRoot.querySelector('.value-display');
     valueDisplay.textContent = this._value;
-
+  }
+  disconnectedCallback() {
+    decrementBtn.removeEventListener('click', decrementButtonClickHandler);
+    incrementBtn.removeEventListener('click', incrementButtonClickHandler);
   }
 }
-customElements.define('stepper-component', Stepper); 
+
+customElements.define('stepper-component', Stepper);
+
+
