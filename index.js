@@ -51,6 +51,7 @@ class Stepper extends HTMLElement {
     switch (name) {
       case 'initial-value':
         this.initialValue = parseFloat(newValue) || 0;
+        this.value = this.initialValue;
         this.updateDisplay();
         break;
       case 'step':
