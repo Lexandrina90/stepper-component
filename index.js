@@ -16,6 +16,7 @@ class Stepper extends HTMLElement {
     this.isFill = this.getAttribute('fill') === 'true';
     this.btnBackground = this.isFill ? '#ffb4a4' : '#2b2220';
     this.minusPlusBackground = this.isFill ? '#2b2220' : '#ffb4a4';
+    this.value = this.initialValue;
 
     const container = document.createElement('div');
     container.setAttribute('class', 'stepper-container');
