@@ -4,6 +4,7 @@ class Stepper extends HTMLElement {
     const shadow = this.attachShadow({ mode: 'open' });
     this._value = 0;
     this.step = 1;
+    this.isFill = false;
     this.fill = '#2b2220';
     this.btnBackground = '#2b2220';
     this.minusPlusBackground = '#ffb4a4';
@@ -12,24 +13,24 @@ class Stepper extends HTMLElement {
   connectedCallback() {
     this.initialValue = parseFloat(this.getAttribute('initial-value')) || 0;
     this.step = parseFloat(this.getAttribute('step')) || 1;
-    this.fill = this.getAttribute('fill') === 'true' ? '#ffb4a4' : '#2b2220';
-    this.btnBackground = this.fill === '#ffb4a4' ? '#ffb4a4' : '#2b2220';
-    this.minusPlusBackground = this.fill === '#ffb4a4' ? '#2b2220' : '#ffb4a4';
+    this.isFill = this.getAttribute('fill') === 'true';
+    this.btnBackground = this.isFill ? '#ffb4a4' : '#2b2220';
+    this.minusPlusBackground = this.isFill ? '#2b2220' : '#ffb4a4';
 
     const container = document.createElement('div');
     container.setAttribute('class', 'stepper-container');
 
     container.innerHTML = `
-        <button class="decrement-btn" style="background: ${this.btnBackground}">
-          <div class="decrement-btn-minus" style="background: ${this.btnBackground}">
-            <div class="decrement-btn-minus-h" style="background: ${this.minusPlusBackground}"></div>
+        <button class="decrement-btn">
+          <div class="decrement-btn-minus">
+            <div class="decrement-btn-minus-h"></div>
           </div>
         </button>
         <div class="value-display">${this.initialValue}</div>
-        <button class="increment-btn" style="background: ${this.btnBackground}">
-          <div class="increment-btn-plus" style="background: ${this.btnBackground}">
-            <div class="increment-btn-plus-v" style="background: ${this.minusPlusBackground}"></div>
-            <div class="increment-btn-plus-h" style="background: ${this.minusPlusBackground}"></div>
+        <button class="increment-btn">
+          <div class="increment-btn-plus">
+            <div class="increment-btn-plus-v"></div>
+            <div class="increment-btn-plus-h"></div>
           </div>
         </button>
       `;
@@ -55,10 +56,11 @@ class Stepper extends HTMLElement {
         this.step = parseFloat(newValue) || 1;
         break;
       case 'fill':
-        this.fill = newValue === 'true' ? '#ffb4a4' : '#2b2220';
-        this.btnBackground = this.fill === '#ffb4a4' ? '#ffb4a4' : '#2b2220';
-        this.minusPlusBackground = this.fill === '#ffb4a4' ? '#2b2220' : '#ffb4a4';
+        this.isFill = newValue === 'true';
+        this.btnBackground = this.isFill ? '#ffb4a4' : '#2b2220';
+    this.minusPlusBackground = this.isFill ? '#2b2220' : '#ffb4a4';
         this.updateStyles();
+        this.updateDisplay();
         break;
       default:
         break;
@@ -87,8 +89,12 @@ class Stepper extends HTMLElement {
     this.incrementButtonClickHandler = incrementButtonClickHandler;
   }
 
-
   updateStyles() {
+    const existingStyle = this.shadowRoot.querySelector('style');
+    if (existingStyle) {
+      existingStyle.remove();
+    }
+
     //CSS-style
     const style = document.createElement('style');
     console.log(style.isConnected);
@@ -180,13 +186,14 @@ class Stepper extends HTMLElement {
       .decrement-btn , .increment-btn {
         cursor: pointer;
       }
+      .fill {
+        background: ${this.fill};
+      }
     `;
+
     this.shadowRoot.appendChild(style);
   }
-  // shadow.appendChild(style);
-  // console.log(style.isConnected);
-  // shadow.appendChild(container);
-
+ 
   updateDisplay() {
     const valueDisplay = this.shadowRoot.querySelector('.value-display');
     if (valueDisplay) {
@@ -200,7 +207,6 @@ class Stepper extends HTMLElement {
     incrementBtn.removeEventListener('click', this.incrementButtonClickHandler);
 
   }
-
   get value() {
     return this._value;
   }
